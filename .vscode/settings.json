@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "util.h": "c",
+        "pthread.h": "c",
+        "string.h": "c",
+        "signal.h": "c",
+        "__sigset_t.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}

@@ -1,9 +1,7 @@
-#include "util.h"
 #include "test.h"
+#include "util.h"
 
-int
-main(void)
-{
+int main(void) {
     debugf("Hello, World!");
 
     debugdump(test_data, sizeof(test_data));

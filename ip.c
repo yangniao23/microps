@@ -12,7 +12,7 @@ static void ip_input(const uint8_t *data, size_t len, struct net_device *dev) {
 }
 
 int ip_init(void) {
-    if (net_protocol_register(NET_PROTOCOL_TYPE_IP, ip_init) == -1) {
+    if (net_protocol_register(NET_PROTOCOL_TYPE_IP, ip_input) == -1) {
         errorf("net_protocol_register() failure");
         return -1;
     }

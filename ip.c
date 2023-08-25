@@ -56,7 +56,6 @@ static void ip_dump(const uint8_t *data, size_t len) {
     uint16_t total, offset;
     char src[IP_ADDR_STR_LEN], dst[IP_ADDR_STR_LEN];
 
-    flockfile(stderr);
     hdr = (struct ip_hdr *)data;
     v = (hdr->vhl & 0xf0) >> 4;
     hl = hdr->vhl & 0x0f;

@@ -4,7 +4,20 @@
         "pthread.h": "c",
         "string.h": "c",
         "signal.h": "c",
-        "__sigset_t.h": "c"
+        "__sigset_t.h": "c",
+        "net.h": "c",
+        "cstdint": "c",
+        "array": "c",
+        "charconv": "c",
+        "compare": "c",
+        "executor": "c",
+        "internet": "c",
+        "functional": "c",
+        "ratio": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "variant": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -3,11 +3,10 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}"
+                "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/sbin/clang",
+            "compilerPath": "/usr/sbin/gcc",
             "cStandard": "c17",
             "cppStandard": "c++14",
             "intelliSenseMode": "linux-clang-x64",

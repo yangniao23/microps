@@ -79,6 +79,10 @@ static void ip_dump(const uint8_t *data, size_t len) {
             hdr->ttl, hdr->protocol, ntoh16(hdr->sum),
             ip_addr_ntop(hdr->src, src, sizeof(src)),
             ip_addr_ntop(hdr->dst, dst, sizeof(dst)));
+
+#ifdef HEXDUMP
+    hexdump(stderr, data, len);
+#endif
 }
 
 static void ip_input(const uint8_t *data, size_t len, struct net_device *dev) {

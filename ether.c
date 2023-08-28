@@ -108,8 +108,10 @@ int ether_input_helper(struct net_device *dev, ether_input_func_t callback) {
     }
     type = ntoh16(hdr->type);
     debugf("dev=%s, type=0x%04x, len=%zd", dev->name, type, flen);
+    hexdump(stderr, frame, flen);
+
     ether_dump(frame, flen);
-    return net_input_handler(type, (uint8_t *)(hdr + sizeof(*hdr)),
+    return net_input_handler(type, (uint8_t *)(hdr) + sizeof(*hdr),
                              flen - sizeof(*hdr), dev);
 }
 

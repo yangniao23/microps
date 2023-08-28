@@ -75,6 +75,36 @@ char *ip_addr_ntop(ip_addr_t n, char *p, size_t size) {
     return p;
 }
 
+int ip_endpoint_pton(const char *p, struct ip_endpoint *n) {
+    char *sep;
+    char addr[IP_ADDR_STR_LEN] = {};
+    long int port;
+
+    sep = strrchr(p, ':');
+    if (!sep) {
+        return -1;
+    }
+    memcpy(addr, p, sep - p);
+    if (ip_addr_pton(addr, &n->addr) == -1) {
+        return -1;
+    }
+    port = strtol(sep + 1, NULL, 10);
+    if (port <= 0 || port > UINT16_MAX) {
+        return -1;
+    }
+    n->port = hton16(port);
+    return 0;
+}
+
+char *ip_endpoint_ntop(const struct ip_endpoint *n, char *p, size_t size) {
+    size_t offset;
+
+    ip_addr_ntop(n->addr, p, size);
+    offset = strlen(p);
+    snprintf(p + offset, size - offset, ":%d", ntoh16(n->port));
+    return p;
+}
+
 static void ip_dump(const uint8_t *data, size_t len) {
     struct ip_hdr *hdr;
     uint8_t v, hl, hlen;
@@ -296,7 +326,7 @@ static void ip_input(const uint8_t *data, size_t len, struct net_device *dev) {
         errorf("too short len than total length");
         return;
     }
-    if (cksum16((uint16_t *)data, len, 0) != 0) {
+    if (cksum16((uint16_t *)hdr, hlen, 0) != 0) {
         errorf("wrong checksum");
         return;
     }
@@ -353,24 +383,24 @@ static ssize_t ip_output_core(struct ip_iface *iface, uint8_t protocol,
     uint8_t buf[IP_TOTAL_SIZE_MAX];
     struct ip_hdr *hdr;
     uint16_t hlen, total;
-    char addr[IP_ADDR_LEN];
-    hdr = (struct ip_hdr *)buf;
+    char addr[IP_ADDR_STR_LEN];
 
+    hdr = (struct ip_hdr *)buf;
     hlen = IP_HDR_SIZE_MIN;
     total = hlen + len;
 
-    hdr->vhl = (IP_VERSION_IPV4 << 4) + (hlen >> 2);
+    hdr->vhl = (IP_VERSION_IPV4 << 4) | (hlen >> 2);
     hdr->tos = 0;
     hdr->total = hton16(total);
     hdr->id = hton16(id);
     hdr->offset = hton16(offset);
     hdr->ttl = 0xFF;
-    hdr->protocol = 1;
+    hdr->protocol = protocol;
     hdr->sum = 0;
     hdr->src = src;
     hdr->dst = dst;
 
-    hdr->sum = cksum16((uint16_t *)buf, IP_HDR_SIZE_MIN, 0);
+    hdr->sum = cksum16((uint16_t *)hdr, hlen, 0);
 
     memcpy(buf + hlen, data, len);
     debugf("dev=%s, dst=%s, protocol=%u, len=%u", NET_IFACE(iface)->dev->name,

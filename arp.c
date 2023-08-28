@@ -104,7 +104,9 @@ static void arp_cache_delete(struct arp_cache *cache) {
            ip_addr_ntop(cache->pa, addr1, sizeof(addr1)),
            ether_addr_ntop(cache->ha, addr2, sizeof(addr2)));
 
-    *cache = (struct arp_cache){0};
+    cache->state = ARP_CACHE_STATE_FREE;
+    cache->pa = IP_ADDR_ANY;
+    memcpy(cache->ha, ETHER_ADDR_ANY, ETHER_ADDR_LEN);
     timerclear(&cache->timestamp);
 }
 
@@ -241,7 +243,7 @@ static void arp_input(const uint8_t *data, size_t len, struct net_device *dev) {
             mutex_unlock(&mutex);
         }
         if (ntoh16(msg->hdr.op) == ARP_OP_REQUEST) {
-            if (arp_reply(iface, dev->addr, tpa, msg->sha) == -1) {
+            if (arp_reply(iface, msg->sha, spa, msg->sha) == -1) {
                 errorf("arp_reply() failure");
                 return;
             }

@@ -61,8 +61,8 @@ static void ether_dump(const uint8_t *frame, size_t flen) {
             " src: %s\n"
             " dst: %s\n"
             "type: 0x%04x\n",
-            ether_addr_ntop(hdr->src, addr, sizeof(addr)),
-            ether_addr_ntop(hdr->dst, addr, sizeof(addr)), ntoh16(hdr->type)
+            ether_addr_ntop(hdr->src, src, sizeof(src)),
+            ether_addr_ntop(hdr->dst, dst, sizeof(dst)), ntoh16(hdr->type)
 
     );
 #ifdef HEXDUMP
@@ -82,7 +82,7 @@ int ether_transmit_helper(struct net_device *dev, uint16_t type,
     memcpy(hdr->src, dev->addr, ETHER_ADDR_LEN);
     hdr->type = hton16(type);
     memcpy(hdr + 1, data, len);
-    if (len < ETHER_PAYLOAD_SIZE_MIN) pad = EHTER_PAYLOAD_SIZE_MIN - len;
+    if (len < ETHER_PAYLOAD_SIZE_MIN) pad = ETHER_PAYLOAD_SIZE_MIN - len;
     flen = sizeof(*hdr) + len + pad;
     debugf("dev=%s, type=0x%04x, len=%zu", dev->name, type, flen);
     ether_dump(frame, flen);
@@ -90,7 +90,7 @@ int ether_transmit_helper(struct net_device *dev, uint16_t type,
 }
 
 int ether_input_helper(struct net_device *dev, ether_input_func_t callback) {
-    uint8_t frame[ETHERNET_FRAME_SIZE_MAX];
+    uint8_t frame[ETHER_FRAME_SIZE_MAX];
     ssize_t flen;
     struct ether_hdr *hdr;
     uint16_t type;

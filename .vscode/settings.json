@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "errno.h": "c"
-    }
+        "errno.h": "c",
+        "time.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

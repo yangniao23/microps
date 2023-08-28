@@ -4,7 +4,7 @@
             "name": "Run binary",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/test/step8.exe",
+            "program": "${workspaceFolder}/test/step13.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

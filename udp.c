@@ -114,8 +114,7 @@ ssize_t udp_output(struct ip_endpoint *src, struct ip_endpoint *dst,
            ip_endpoint_ntop(dst, ep2, sizeof(ep2)), total, len);
     udp_dump((uint8_t *)hdr, total);
 
-    if (ip_output(IP_PROTOCOL_UDP, (uint8_t *)hdr, total, src->addr,
-                  dst->addr) == -1) {
+    if (ip_output(IP_PROTOCOL_UDP, buf, total, src->addr, dst->addr) == -1) {
         errorf("ip_output() failure");
         return -1;
     }

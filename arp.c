@@ -182,7 +182,7 @@ static int arp_request(struct net_iface *iface, ip_addr_t tpa) {
     debugf("dev=%s, len=%zu", iface->dev->name, sizeof(req));
     arp_dump((uint8_t *)&req, sizeof(req));
     return net_device_output(iface->dev, ETHER_TYPE_ARP, (uint8_t *)&req,
-                             sizeof(req), ETHER_ADDR_BROADCAST);
+                             sizeof(req), iface->dev->broadcast);
 }
 
 static int arp_reply(struct net_iface *iface, const uint8_t *tha, ip_addr_t tpa,

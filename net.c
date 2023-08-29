@@ -18,6 +18,7 @@
 static struct net_protocol *protocols;
 static struct net_device *devices;
 static struct net_timer *timers;
+static struct net_event *events;
 
 struct net_protocol {
     struct net_protocol *next;
@@ -36,6 +37,12 @@ struct net_timer {
     struct timeval interval;
     struct timeval last;
     void (*handler)(void);
+};
+
+struct net_event {
+    struct net_event *next;
+    void (*handler)(void *arg);
+    void *arg;
 };
 
 struct net_device *net_device_alloc(void) {
@@ -238,6 +245,31 @@ int net_softirq_handler(void) {
     }
     return 0;
 }
+
+/* NOTE: must not be call after net_run() */
+int net_event_subscribe(void (*handler)(void *arg), void *arg) {
+    struct net_event *event;
+
+    event = memory_alloc(sizeof(*event));
+    if (!event) {
+        errorf("memory_alloc() failure");
+        return -1;
+    }
+    event->handler = handler;
+    event->arg = arg;
+    event->next = events;
+    events = event;
+    return 0;
+}
+
+int net_event_handler(void) {
+    struct net_event *event;
+
+    for (event = events; event; event = event->next) event->handler(event->arg);
+    return 0;
+}
+
+void net_raise_event() { intr_raise_irq(INTR_IRQ_EVENT); }
 
 int net_run(void) {
     struct net_device *dev;
